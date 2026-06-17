@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>Fast and Food | Technical Case Study</title>
+    <meta name="description" content="Technical engineering breakdown of Fast and Food: Unreal Engine event-driven cooking state machines and projectile delivery physics.">
+    <meta property="og:title" content="Fast and Food | Technical Case Study — Anirudh MP">
+    <meta property="og:description" content="Unreal Engine cooking simulation: event-driven delegate state machines, dynamic material systems, projectile delivery physics.">
+    <meta property="og:image" content="fast-and-food-header.jpg">
+    <meta property="og:type" content="article">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="case-study.css">
+</head>
+<body class="theme-food">
+    <nav class="navbar">
+        <div class="logo">Anirudh MP</div>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#projects">Projects</a></li>
+        </ul>
+    </nav>
+
+    <header class="case-study-hero">
+        <h1 class="glitch" data-text="FAST AND FOOD">FAST AND FOOD</h1>
+        <h2 class="subtitle">Event-Driven Recipe State & Delivery Systems</h2>
+        
+        <div class="meta-grid">
+            <div class="meta-item">
+                <div class="meta-label">Engine & Language</div>
+                <div class="meta-value">Unreal Engine / PC</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Architecture</div>
+                <div class="meta-value">Event-Driven Delegate</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Target Role</div>
+                <div class="meta-value">Gameplay / Systems Programmer</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Scope</div>
+                <div class="meta-value">Cooking & Order Assembly</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="case-study-content">
+        <a href="index.html#projects" class="back-nav">← Back to Projects</a>
+
+        <img src="fast-and-food-header.jpg" alt="Fast and Food game header art showing the illegal food truck cooking simulation with ingredient collection and order delivery gameplay" class="cs-cover-img">
+
+        <h2>1. Project Vision</h2>
+        <p>
+            <span class="emphasis-bold">Fast and Food</span> is a high-speed PC cooking and logistics simulation game about running an illegal food truck. The game tests the player's coordination through three distinct core gameplay phases: collecting raw ingredients from containment sites, combining ingredients at prep stations into custom packages, and physically throwing completed packaged orders to target customers along the road.
+        </p>
+        <p>
+            As a <span class="emphasis-bold">Gameplay & Systems Programmer</span> on this team project, I engineered the core cooking engine and state tracking systems. This required designing a robust, non-polling, event-driven architecture that tracks cooking conditions, manages visual state changes, and calculates dynamic quality ratings for assembled items. Additionally, I took on art integration responsibilities: modeling the food 3D assets, designing the spatial layout for the interior of the truck, and managing the overall project asset database.
+        </p>
+
+        <h2>2. Technical Architecture & Module Structure</h2>
+        <p>
+            The game modules are divided to isolate the physical interaction of cooking utensils from the food state data and packaging solvers:
+        </p>
+        
+        <div class="arch-diagram">
+            <div class="arch-column">
+                <h4>Cooking & Economic Systems</h4>
+                <ul>
+                    <li>Utensil Event Broker</li>
+                    <li>Food State Component</li>
+                    <li>Dynamic Material Instance</li>
+                    <li>Thermal Accumulator</li>
+                    <li>Rating Struct Evaluator</li>
+                    <li>Fuel Depletion Component</li>
+                    <li>Incremental Economic Penalty</li>
+                    <li>Customer Rating & Tip Broker</li>
+                </ul>
+            </div>
+            <div class="arch-column">
+                <h4>Order Assembly & Pack</h4>
+                <ul>
+                    <li>Ingredient Gatherer</li>
+                    <li>Assembly Station Solver</li>
+                    <li>Packaging Box Broker</li>
+                    <li>Collision Handshake</li>
+                </ul>
+            </div>
+            <div class="arch-column">
+                <h4>Integration & Asset Pipeline</h4>
+                <ul>
+                    <li>Projectile Throw Handler</li>
+                    <li>Interior Truck Layout Design</li>
+                    <li>Asset Registry & Folder Structure</li>
+                    <li class="sub-item">Order Dispatcher [Teammate System]</li>
+                    <li class="sub-item">Target Delivery Solver [Teammate System]</li>
+                    <li class="sub-item">Score Calculation [Teammate System]</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>3. Key Technical Systems — Deep Dive</h2>
+
+        <h3>3.1 Event-Driven Cooking State Engine <span class="tech-pill">Delegates & Materials</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Developing a cooking system where food transitions dynamically through multiple states (<span class="code-highlight">Uncooked → Undercooked → Perfectly Cooked → Burned</span>) when placed on cooking utensils (stoves, griddles, fryers). The engine had to avoid heavy update loops (Tick) for performance, keep systems decoupled, and handle dynamic visual feedback to indicate current cook status.
+            </p>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Implemented a decoupled, event-driven state model utilizing <span class="emphasis-bold">Unreal Engine Delegate Bindings</span> and dynamic visual parameter scaling:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Delegate-Driven Thermal Broker:</span> Rather than the food actor constantly polling the utensil's state, utensils act as broadcasters. Placing food on a utensil registers the food's thermal interface to the utensil's <span class="code-highlight">OnHeatEmitted</span> Event Dispatcher. Utensils only emit events when active, removing unnecessary frame-tick overhead.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Discrete State Machine:</span> Internal thermal accumulators convert heat into cooked percentage. When specific thresholds are crossed, the system executes discrete state changes:
+                    <br>&nbsp;&nbsp;▪&nbsp;&nbsp;<span class="emphasis-bold">Uncooked:</span> Raw state, initial rating multiplier.
+                    <br>&nbsp;&nbsp;▪&nbsp;&nbsp;<span class="emphasis-bold">Undercooked:</span> Moderate multiplier, penalizes score.
+                    <br>&nbsp;&nbsp;▪&nbsp;&nbsp;<span class="emphasis-bold">Perfectly Cooked:</span> Optimal state, maximizes customer rating.
+                    <br>&nbsp;&nbsp;▪&nbsp;&nbsp;<span class="emphasis-bold">Burned:</span> Ruined state, zero or negative rating multiplier.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Dynamic Material Instances (Visual Cooking):</span> To display the cooking process without frame-heavy mesh swaps, a parent material was designed using scalar parameters for color tint and noise-mask carbonization. When heat events occur, the food updates its <span class="code-highlight">Dynamic Material Instance</span>, blending colors from raw hue to golden-brown, and eventually to a charred black texture.
+                </li>
+            </ul>
+        </div>
+
+        <h3>3.2 Food Item Packaging & Data Registration <span class="tech-pill">Container Structs</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Managing how cooked food actors are combined inside a delivery bag. Stacking multiple distinct 3D mesh actors inside the bag would cause physics collisions to glitch, decrease performance, and complicate data management for order checks.
+            </p>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Created a transition-based packaging solver that collapses physical actors into light data representations:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Actor Deactivation & Registration:</span> When a food actor is placed inside the bag, its physical representation (the actor mesh) is immediately destroyed/disabled. Its cooked data parameters (state enum, cook rating, and ID) are registered inside a dynamic array of C++ structs on the bag actor.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Visual Containment:</span> This allows the bag to manage the data overhead of multiple ingredients as a single physical entity, preventing physics collisions from glitching inside the package asset.
+                </li>
+            </ul>
+        </div>
+
+        <h3>3.3 Physics-Based Delivery Projectile <span class="tech-pill">Launch Physics & Collisions</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Launching the packaged delivery bag out of the truck window to delivery zones. The package needed custom launch physics, input force scaling, and custom collision profiles so it wouldn't bounce inside the truck and disrupt controls.
+            </p>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Programmed the projectile launch mechanics using a customized <span class="code-highlight">ProjectileMovementComponent</span>:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Launch Force & Collision Routing:</span> Calculated force vectors based on player aim inputs. Designed a custom collision channel that ignores the truck's interior assets, preventing self-collision bugs, but registers hits on external targets.
+                </li>
+                <li>
+                    <span class="emphasis-bold">System Handoff Interface:</span> Designed the projectile to expose its registered food data array on overlap, enabling teammate systems (such as the customer queue and vehicle track) to poll the delivery data and calculate scores on receipt.
+                </li>
+            </ul>
+        </div>
+
+        <h3>3.4 3D Art Pipeline & Asset Modeling <span class="tech-pill">Asset Management</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Managing and optimizing a dense collection of custom cooking utensils, food assets, and truck interior props. The models needed to be lightweight for real-time PC performance while maintaining a clean, stylized visual theme.
+            </p>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Modeled 3D food assets and structured the art import pipeline within Unreal Engine:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Asset Design & Texturing:</span> Created stylized, low-poly 3D models (such as the food items, squeeze bottles, and cooking pans) to ensure instant visual readability during high-stress gameplay.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Asset Registry & Optimization:</span> Structured a strict folder hierarchy for models, materials, textures, and Blueprints. Organized imports and naming conventions, minimizing reference errors and managing dependencies across the team.
+                </li>
+            </ul>
+        </div>
+
+        <div class="asset-gallery">
+            <div class="asset-card">
+                <img src="fast-and-food-asset1.jpg" alt="Low-poly 3D samosa model created in Blender with hand-painted Substance Painter textures for the Fast and Food cooking game">
+                <div class="asset-label">Samosa Mesh</div>
+            </div>
+            <div class="asset-card">
+                <img src="fast-and-food-asset2.jpg" alt="Low-poly 3D ketchup bottle model created in Blender with stylized Substance Painter materials for the Fast and Food cooking game">
+                <div class="asset-label">Ketchup Bottle Mesh</div>
+            </div>
+            <div class="asset-card">
+                <img src="fast-and-food-asset3.jpg" alt="Low-poly 3D frying pan model created in Blender used as the primary cooking utensil in the Fast and Food cooking game">
+                <div class="asset-label">Frying Pan Mesh</div>
+            </div>
+        </div>
+
+        <h3>3.5 Fuel Depletion & Incremental Penalty Solver <span class="tech-pill">Resource Management</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Creating a persistent resource threat (fuel) that depletes in real-time. When exhausted, the system must deduct funds, scaling the financial penalty progressively to simulate rising resource costs and push players to maintain high cooking efficiency.
+            </p>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Programmed a timer-based resource manager tied directly to the player's wallet:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Real-Time Fuel Depletion:</span> A ticking component tracks current fuel capacity. When depletion reaches 0, the system triggers a cash deduction event.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Incremental Scaling Penalty:</span> To scale difficulty, each consecutive fuel exhaustion increments a penalty multiplier. This increases the amount deducted every time the player fails to restock, compounding the economic stakes.
+                </li>
+            </ul>
+        </div>
+
+        <h3>3.6 Dynamic Customer Rating & Tip Broker <span class="tech-pill">Score & Wallet Modifiers</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Designing a payout system that translates the physical quality of delivered food (state ratings) into direct gameplay rewards (tips), incentivizing optimal preparation over fast but sloppy delivery.
+            </p>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Implemented a payout-adjuster component that reads packaged data arrays:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Rating-Based Scaling:</span> When a package is received, the system evaluates the registered state metrics of all cooked items inside.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Tip Rewards:</span> High-quality items (e.g. perfectly cooked) trigger percentage-based tip modifiers, boosting the base order payout. Poorly cooked or burned items bypass the tip logic and apply negative modifiers, linking game feel directly to financial performance.
+                </li>
+            </ul>
+        </div>
+
+        <h3>3.7 Truck Spatial Layout & Level Design <span class="tech-pill">Level Design</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Designing a functional level layout inside the limited space of a food truck. The workstation positioning had to support high-stress, rapid gameplay where the player must gather ingredients, cook, package, and serve efficiently without spatial bottlenecks.
+            </p>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Engineered a linear layout blueprint mapping dedicated workstations to optimize the player's movement pipeline:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Station Pipeline Layout:</span> Arranged stations sequentially (Storage ➔ Fridge ➔ Pizza Counter ➔ Stove Area) on the left side of the vehicle, running parallel to the Serving Window on the right. This layout minimizes unnecessary back-and-forth movement.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Prototyping Dimensions:</span> Mapped the 9m x 12m vehicle interior space to guarantee adequate player collision space in the center lane, ensuring gameplay flow and preventing camera clipping issues.
+                </li>
+            </ul>
+        </div>
+
+        <img src="fast-and-food-layout.jpg" alt="Top-down architectural blueprint of the food truck interior showing ingredient storage zones, cooking stations, prep areas, and the delivery window layout" class="cs-layout-img">
+
+        <h2>4. Communication Flow Model</h2>
+        <p>
+            The cooking event architecture establishes clean communication boundaries between physical utensils, state evaluation, and presentation layers:
+        </p>
+
+        <div class="node-container">
+            <div class="node primary">
+                <div class="node-title">Utensil (Broadcaster)</div>
+                <div class="node-value">UCookingUtensil</div>
+            </div>
+            
+            <div class="node-arrow">➔</div>
+            
+            <div class="node">
+                <div class="node-title">Unreal Delegate</div>
+                <div class="node-value">OnHeatEmitted</div>
+            </div>
+            
+            <div class="node-arrow">➔</div>
+            
+            <div class="node">
+                <div class="node-title">State Evaluator</div>
+                <div class="node-value">UFoodStateComponent</div>
+            </div>
+
+            <div class="node-arrow">➔</div>
+            
+            <div class="node-sub-list">
+                <div class="node-sub-item">Update Dynamic Material Scalar (Color/Char)</div>
+                <div class="node-sub-item">Update Local State Enum (Uncooked -> Burned)</div>
+                <div class="node-sub-item">Send Active Rating to Assembly Station</div>
+            </div>
+        </div>
+
+        <p>
+            <span class="emphasis-bold">Decoupling Advantage:</span> The Cooking Utensil contains zero references to food item classes or recipes. It simply broadcasts thermal values. Any actor containing a <span class="code-highlight">UFoodStateComponent</span> can be placed on the stove, fryer, or griddle and will instantly respond, demonstrating excellent system extensibility.
+        </p>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <a href="index.html#projects" class="cta-btn" style="margin-bottom: 3rem;">Back to Portfolio</a>
+            <div class="social-links">
+                <a href="https://gitlab.com/minpitothers" target="_blank" rel="noopener noreferrer">GitLab</a>
+                <a href="https://anirudh-mp.itch.io" target="_blank" rel="noopener noreferrer">Itch.io</a>
+                <a href="https://discord.com/users/802830732791644171" target="_blank" rel="noopener noreferrer">Discord</a>
+                <a href="https://www.linkedin.com/in/anirudh-mp-785530284" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </div>
+            <p class="copyright">© 2026 Game Dev Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+</body>
+</html>

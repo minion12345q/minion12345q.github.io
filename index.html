@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>Anirudh MP | Game Developer & Designer</title>
+    <meta name="description" content="Portfolio of Anirudh MP — Game Developer & Designer specializing in Unity, Unreal Engine, FSM-driven AI, and event-driven gameplay systems.">
+    <meta property="og:title" content="Anirudh MP | Game Developer & Designer">
+    <meta property="og:description" content="Game developer building unique mechanics in Unity & Unreal Engine. FSM boss AI, event-driven cooking systems, asymmetric multiplayer.">
+    <meta property="og:image" content="el-pollo-diablo-cover.jpg">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Anirudh MP</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#achievements">Achievements</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="glitch" data-text="GAME DEVELOPER">GAME DEVELOPER</h1>
+            <h2 class="subtitle">& DESIGNER</h2>
+            <p>Aspiring industry professional actively seeking a Game Development or Design Internship.</p>
+            <a href="#projects" class="cta-btn">View My Work</a>
+        </div>
+        <div class="hero-background"></div>
+    </header>
+
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <p class="about-text">
+                    I play platformers, RPGs, and indie games — especially the ones with mechanics you've never seen before, and as a developer, what excites me is designing those kinds of unique mechanics and then building the systems to make them actually work in-engine.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="section">
+        <div class="container">
+            <h2 class="section-title">Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-card"><h3>Unity / C#</h3><p>Finite State Machines, Observer Pattern, event-driven architecture, physics systems, Input System.</p></div>
+                <div class="skill-card"><h3>Unreal Engine</h3><p>Blueprints, Delegates & Event Dispatchers, Dynamic Materials, Projectile systems.</p></div>
+                <div class="skill-card"><h3>Game Design</h3><p>Mechanic prototyping, cooking & crafting systems, asymmetric multiplayer, boss AI balancing.</p></div>
+                <div class="skill-card"><h3>3D Modeling & Texturing</h3><p>Modeling in Blender, texturing in Substance Painter, game-ready assets & props.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="achievements" class="section">
+        <div class="container">
+            <h2 class="section-title">Achievements</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <div class="achievement-icon">🥉</div>
+                    <h3>3rd Place</h3>
+                    <p>Technex Game Jam by IIT-BHU</p>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">🥈</div>
+                    <h3>2nd Place</h3>
+                    <p>Krafton Better Ground Program</p>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">🥉</div>
+                    <h3>3rd Place</h3>
+                    <p>LPU Gaming Masters</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <div class="container">
+            <h2 class="section-title">Team Projects</h2>
+            <div class="projects-grid projects-grid-spaced">
+                <div class="project-card" onclick="window.location.href='fast-and-food.html'">
+                    <div class="project-image project-image-cover food-cover"></div>
+                    <div class="project-info">
+                        <h3>Fast and Food</h3>
+                        <div class="project-roles">
+                            <span class="role role-dev">Programmer</span>
+                            <span class="role role-design">Game Designer</span>
+                            <span class="role role-art">Asset Designer</span>
+                        </div>
+                        <p>A simulation game about running an illegal food truck.</p>
+                        <a href="fast-and-food.html" class="cta-btn cta-btn-sm">Read Case Study</a>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Solo Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card" onclick="window.location.href='squash-leap.html'">
+                    <div class="project-image project-image-cover squash-cover"></div>
+                    <div class="project-info">
+                        <h3>Squash Leap</h3>
+                        <div class="project-roles">
+                            <span class="role role-solo">Solo Developer</span>
+                        </div>
+                        <p>A unique platformer where jumping is your only movement, relying on your tongue to attach to objects and navigate.</p>
+                        <a href="squash-leap.html" class="cta-btn cta-btn-sm">Read Case Study</a>
+                    </div>
+                </div>
+                <div class="project-card" onclick="window.location.href='el-pollo-diablo.html'">
+                    <div class="project-image project-image-cover pollo-cover"></div>
+                    <div class="project-info">
+                        <h3 class="pollo-highlight">El Pollo Diablo</h3>
+                        <div class="project-roles">
+                            <span class="role role-solo">Solo Developer</span>
+                        </div>
+                        <p>An intense 2D side-scrolling combat game featuring a single-player FSM boss fight and asymmetric local multiplayer modes.</p>
+                        <a href="el-pollo-diablo.html" class="cta-btn cta-btn-sm">Read Case Study</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer">
+        <div class="container">
+            <h2>Let's Level Up Together</h2>
+            <p class="footer-subtitle">Actively seeking internship opportunities. I'd love to chat about how I can contribute to your team!</p>
+            <a href="mailto:anirudhmp.23@lpu.in?subject=Internship%20Opportunity%20%E2%80%94%20Game%20Developer" class="cta-btn cta-btn-footer">Get In Touch</a>
+            <div class="social-links">
+                <a href="https://gitlab.com/minpitothers" target="_blank" rel="noopener noreferrer">GitLab</a>
+                <a href="https://anirudh-mp.itch.io" target="_blank" rel="noopener noreferrer">Itch.io</a>
+                <a href="https://discord.com/users/802830732791644171" target="_blank" rel="noopener noreferrer">Discord</a>
+                <a href="https://www.linkedin.com/in/anirudh-mp-785530284" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </div>
+            <p class="copyright">© 2026 Anirudh MP. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+    <script src="script.js"></script>
+</body>
+</html>
