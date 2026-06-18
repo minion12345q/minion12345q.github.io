@@ -42,7 +42,7 @@
             </div>
             <div class="meta-item">
                 <div class="meta-label">Development</div>
-                <div class="meta-value">Solo Systems Project</div>
+                <div class="meta-value">Solo (UI Assets by Friend)</div>
             </div>
         </div>
     </header>
@@ -56,16 +56,27 @@
         <p>
             <span class="emphasis-bold pollo-highlight">El Pollo Diablo</span> is a 2D side-scrolling combat systems demonstration focusing entirely on combat mechanics and system management, with no platforming sequences. The game features two distinct operational modes:
         </p>
-        <p>
-            <span class="emphasis-bold">1. Single-Player Boss Fight Mode:</span> The user plays as the Prisoner, engaging in a boss-battle campaign against the AI-controlled mutant chicken boss (<span class="pollo-highlight">El Pollo Diablo</span>) governed by a 12-state Finite State Machine (FSM).
-        </p>
-        <p>
-            <span class="emphasis-bold">2. Local Asymmetric Multiplayer Mode:</span> A PvP setup where Player 1 controls the nimble Prisoner (melee combat and throwable boomerang) and Player 2 takes direct, hardware-routed control of the massive boss chicken (<span class="pollo-highlight">El Pollo Diablo</span>), utilizing charge attacks, ground slams, levitation bombardment, and minion spawning.
-        </p>
-        <p>
-            The core systems engineering challenge lay in developing a single, decoupled codebase capable of handling both modes: implementing advanced AI state behavior for the single-player boss, mapping distinct input routing configurations for local multiplayer, and managing physical collisions for asymmetric characters.
-        </p>
+        <div class="polish-grid" style="margin-bottom: 30px;">
+            <div class="polish-card">
+                <h4>1. Single-Player Boss Fight Mode</h4>
+                <p>
+                    The player controls the Prisoner, engaging in a boss-battle campaign against the AI-controlled mutant chicken boss (<span class="pollo-highlight">El Pollo Diablo</span>) governed by a 12-state Finite State Machine (FSM).
+                </p>
+            </div>
+            <div class="polish-card">
+                <h4>2. Local Asymmetric Multiplayer Mode</h4>
+                <p>
+                    A PvP setup where Player 1 controls the nimble Prisoner (melee combat and throwable boomerang) and Player 2 takes direct, hardware-routed control of the massive boss chicken (<span class="pollo-highlight">El Pollo Diablo</span>), utilizing charge attacks, ground slams, levitation bombardment, and minion spawning.
+                </p>
+            </div>
+        </div>
 
+        <div class="challenge-solution-card" style="border-left: 4px solid var(--cs-accent);">
+            <div class="card-tag tag-challenge">The Engineering Challenge</div>
+            <p style="margin-top: 10px;">
+                Developing a single, decoupled codebase capable of handling both modes: implementing advanced AI state behavior for the single-player boss, mapping distinct input routing configurations for local multiplayer, and managing physical collisions for asymmetric characters.
+            </p>
+        </div>
         <h2>2. Technical Architecture & Module Structure</h2>
         <p>
             The architecture utilizes Unity’s modular component model, extended with custom decoupled modules, custom state machines, and event-driven patterns to handle cross-system coordination without circular references.
@@ -223,6 +234,38 @@
             </ul>
         </div>
 
+        <h3>3.5 UI Presentation & Asset Integration <span class="tech-pill">Collaborative Polish</span></h3>
+        <div class="challenge-solution-card">
+            <div class="card-tag tag-challenge">The Challenge</div>
+            <p>
+                Designing high-quality, visually polished user interface assets was a major development bottleneck due to:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Skill Specialization:</span> As a sole developer, my focus was entirely on backend systems engineering, FSM design, and physics solvers rather than graphic design.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Placeholder Programmer Art:</span> Using placeholder assets during early testing limited the aesthetic appeal of the combat and multiplayer routing interfaces.
+                </li>
+            </ul>
+            
+            <div class="card-tag tag-solution">The Solution</div>
+            <p>
+                Following the completion of the initial gameplay prototype, a graphic designer friend voluntarily offered to help by designing professional UI assets, which allowed me to focus on:
+            </p>
+            <ul>
+                <li>
+                    <span class="emphasis-bold">Decoupled UI event brokers:</span> Programming event-driven HUD triggers that listen to health change delegates without circular references.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Input routing integration:</span> Engineering the hardware controller assignment overlays to integrate their asset layouts seamlessly.
+                </li>
+                <li>
+                    <span class="emphasis-bold">Clean visual presentation:</span> Replacing placeholder programmer art to achieve a high-fidelity visual standard matching the core gameplay feel.
+                </li>
+            </ul>
+        </div>
+
         <h2>4. Decoupled Health Model & Observer Pattern</h2>
         <p>
             The health architecture demonstrates decoupled design by isolating the primary health model from downstream presentation systems:
@@ -295,6 +338,17 @@
                 </p>
             </div>
         </div>
+
+        <h2>6. Gameplay Showcase</h2>
+        <a href="https://www.youtube.com/watch?v=QWWrccZAKxY" target="_blank" rel="noopener noreferrer" class="video-link-card" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('el-pollo-diablo-cover.jpg');">
+            <div class="play-btn-overlay">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-card-title">
+                <span>Watch Gameplay on YouTube (Placeholder)</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+            </div>
+        </a>
     </main>
 
     <footer class="footer">
