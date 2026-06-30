@@ -7,7 +7,7 @@
     <title>Squash Leap | Technical Case Study</title>
     <meta name="description" content="Technical engineering breakdown of Squash Leap: Unity physics integration, SpringJoint2D grappling hooks, dynamic rope rendering, and charge-up jump physics.">
     <meta property="og:title" content="Squash Leap | Technical Case Study — Anirudh MP">
-    <meta property="og:description" content="Physics-based platformer: SpringJoint2D tongue grappling, time-based charge jump mechanics, and decoupled event-driven triggers.">
+    <meta property="og:description" content="Technical engineering breakdown of Squash Leap: Unity physics integration, SpringJoint2D grappling hooks, dynamic rope rendering, and charge-up jump physics.">
     <meta property="og:image" content="squash-leap-cover.jpg">
     <meta property="og:type" content="article">
     <link rel="stylesheet" href="styles.css">
@@ -21,11 +21,6 @@
             <li><a href="index.html#home">Home</a></li>
             <li><a href="index.html#projects">Projects</a></li>
         </ul>
-        <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </nav>
 
     <header class="case-study-hero">
@@ -33,7 +28,7 @@
         <h2 class="subtitle">Physics-Driven Locomotion & Joint Mechanics</h2>
         
         <div class="meta-grid">
-            <div class="meta-item">
+                        <div class="meta-item">
                 <div class="meta-label">Engine & Language</div>
                 <div class="meta-value">Unity / C#</div>
             </div>
@@ -50,138 +45,127 @@
                 <div class="meta-value">Solo Exploratory Project</div>
             </div>
         </div>
+                <a href="https://www.youtube.com/watch?v=QWWrccZAKxY" target="_blank" rel="noopener noreferrer" class="cs-video-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>
+            Watch Gameplay Video
+        </a>
     </header>
 
     <main class="case-study-content">
         <a href="index.html#projects" class="back-nav">← Back to Projects</a>
 
-        <img src="squash-leap-cover.jpg" alt="Squash Leap game cover art showing a cute orange frog extending its long tongue to anchor onto the Squash Leap game title text" class="cs-cover-img">
+        <img src="squash-leap-cover.jpg" alt="SQUASH LEAP game cover art" class="cs-cover-img">
 
         <h2>1. Project Vision</h2>
-        <p>
-            <span class="emphasis-bold">Squash Leap</span> was my first exploratory project in the Unity Engine, designed with a central creative constraint: <span class="emphasis-bold">eliminate traditional directional walk and run inputs entirely</span>. Instead, the player controls an orange frog whose mobility is completely dependent on physical interactions with the environment.
-        </p>
-        <p>
-            Locomotion is divided into two primary kinetic systems: a dynamic, physics-based <span class="emphasis-bold">tongue grapple</span> that allows the player to attach to and swing from specific "candy" anchors in the world, and a <span class="emphasis-bold">charge-up vertical jump</span> for launching off platforms.
-        </p>
-        <p>
-            The engineering objective was to delve into Unity's physics engine—specifically manipulating 2D joints, updating procedural line renderers, and coding time-based launch calculations—to create a movement loop that feels snappy, consistent, and fun to master.
-        </p>
-
-        <h2>2. Technical Architecture & Module Structure</h2>
-        <p>
-            The gameplay systems are structured to isolate physics-based locomotion from environment trigger actions:
-        </p>
-        
-        <div class="arch-diagram">
-            <div class="arch-column">
-                <h4>Grappling Systems</h4>
-                <ul>
-                    <li>SpringJoint2D Adapter</li>
-                    <li>Anchor Overlap Sensor</li>
-                    <li>Dynamic Retraction Controller</li>
-                    <li>Tongue LineRenderer</li>
-                    <li>Target Vector Aiming</li>
-                </ul>
-            </div>
-            <div class="arch-column">
-                <h4>Launch & Jump Physics</h4>
-                <ul>
-                    <li>Charge Timer Accumulator</li>
-                    <li>Jump Force Clamper</li>
-                    <li>Launch Vector Resolver</li>
-                    <li>Visual Squish Interpolator</li>
-                </ul>
-            </div>
-            <div class="arch-column">
-                <h4>Interactive Triggers</h4>
-                <ul>
-                    <li>Proximity Trigger Sensor</li>
-                    <li>Lever Actuator Component</li>
-                    <li>Door Animation Bridge</li>
-                    <li>Event Connection Broker</li>
-                </ul>
-            </div>
-        </div>
-
-        <h2>3. Key Technical Systems — Deep Dive</h2>
-
-        <h3>3.1 SpringJoint2D Tongue Grapple & Retraction <span class="tech-pill">Physics Joint Modulation</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Creating a grappling hook that doesn't just act as a static line, but behaves like an elastic, controllable rope. The player needed to swing realistically, while also having the ability to actively pull themselves towards the anchor point at a consistent, responsive speed.
-            </p>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Utilized Unity's <span class="code-highlight">SpringJoint2D</span> to manage the physical hook connection, dynamically modifying joint properties at runtime:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Anchor Constraint Validation:</span> A 2D raycast and overlap sensor sweeps around the player's aim vector, ensuring the tongue can only attach to objects tagged as "Candy" anchors.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Dynamic Retraction:</span> When the player holds down the pull button, a controller script reduces the joint's <span class="code-highlight">distance</span> parameter incrementally. Rather than modifying velocity vectors directly—which bypasses Unity's collision system—this relies on the physics engine to pull the Rigidbody2D naturally, preserving environmental collisions.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Visual Rendering:</span> A custom script updates a <span class="code-highlight">LineRenderer</span> every frame, stretching the tongue sprite from the mouth to the active anchor coordinates.
-                </li>
-            </ul>
-        </div>
-
-        <h3>3.2 Time-Based Charge-Up Jump Mechanics <span class="tech-pill">Accumulator & Force Mapping</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Designing a jump mechanic that supports nuanced mobile touch controls, permitting both small hops and high launches without introducing complex touch gestures.
-            </p>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Implemented a time-accumulator launch calculator that monitors player input duration:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Force Accumulation:</span> Holding down the input charges a timer. This timer maps to a jump force range clamped between a defined minimum and maximum threshold.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Squash Visual Feedback:</span> While charging, the player sprite's vertical scale decreases while its horizontal scale increases, providing a clear visual indication of stored energy before launch.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Vector Launch:</span> On release, the stored force is applied as a sudden impulse vector along the frog's facing direction, launching the Rigidbody2D.
-                </li>
-            </ul>
-        </div>
-
-        <h3>3.3 Event-Driven Lever & Door Interactions <span class="tech-pill">Decoupled Activation</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Creating a level interaction system where levers open specific locked doors, without creating tight object references that make level editing difficult.
-            </p>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Developed a trigger sensor model that uses C# delegates to broadcast lever activations:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Proximity Checks:</span> Levers use 2D triggers to detect when the player is within interaction range, showing a prompt on mobile screens.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Decoupled Triggering:</span> Levers expose an <span class="code-highlight">OnActivated</span> event. Specific doors subscribe to these events at start-up, meaning a single lever can trigger multiple actions (opening a door, activating a trap, triggering a camera zone) without containing hardcode dependencies.
-                </li>
-            </ul>
-        </div>
-
-        <h2>4. Technical Implementation & Scripts</h2>
-        <p>
-            The two core scripts below demonstrate the physics integration and control mapping implemented for the locomotion system:
-        </p>
-
-        <h3>TongueGrappleController.cs</h3>
-        <pre><code class="language-csharp">using UnityEngine;
+<p>
+    What happens when you take a platformer and ban walking?
+</p>
+<p>
+    That was the core creative constraint behind <span class="emphasis-bold">Squash Leap</span>, a solo exploratory project I built in Unity. I wanted to see if I could create an engaging, high-mobility game by completely eliminating traditional directional movement keys (A/D or left/right stick). Instead, the player controls a cute frog who is entirely dependent on physical interactions with the environment to move.
+</p>
+<p>
+    Locomotion is split into two distinct kinetic systems: 1. A dynamic, physics-based <span class="emphasis-bold">tongue grapple</span> that lets the player hook onto and swing from "candy" anchors in the sky. 2. A <span class="emphasis-bold">charge-up jump</span> for launching off platforms.
+</p>
+<p>
+    The engineering challenge was to dive deep into Unity's 2D physics engine, manipulating joints, updating line renderers, and coding time-based force calculations to build a physics loop that feels snappy, responsive, and incredibly fun to master.
+</p>
+<hr class="section-divider">
+<h2>2. Technical Architecture & Module Structure</h2>
+<p>
+    The gameplay systems are structured to isolate physics-based locomotion from environment trigger actions:
+</p>
+<div class="arch-diagram">
+    <div class="arch-column">
+        <h4>Grappling Systems</h4>
+<ul>
+    <li>SpringJoint2D Adapter</li>
+    <li>Anchor Overlap Sensor</li>
+    <li>Dynamic Retraction Controller</li>
+    <li>Tongue LineRenderer</li>
+    <li>Target Vector Aiming</li>
+</ul>
+    </div>
+    <div class="arch-column">
+        <h4>Launch & Jump Physics</h4>
+<ul>
+    <li>Charge Timer Accumulator</li>
+    <li>Jump Force Clamper</li>
+    <li>Launch Vector Resolver</li>
+    <li>Visual Squish Interpolator</li>
+</ul>
+    </div>
+    <div class="arch-column">
+        <h4>Interactive Triggers</h4>
+<ul>
+    <li>Proximity Trigger Sensor</li>
+    <li>Lever Actuator Component</li>
+    <li>Door Animation Bridge</li>
+    <li>Event Connection Broker</li>
+</ul>
+    </div>
+</div>
+<hr class="section-divider">
+<h2>3. Key Technical Systems — Deep Dive</h2>
+<h3>3.1 SpringJoint2D Tongue Grapple & Retraction <span class="tech-pill">Physics Joint Modulation</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Creating a grappling hook that doesn't just act as a static line, but behaves like an elastic, controllable rope. The player needed to swing realistically, while also having the ability to actively pull themselves towards the anchor point at a consistent, responsive speed.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Utilized Unity's <span class="code-highlight">SpringJoint2D</span> to manage the physical hook connection, dynamically modifying joint properties at runtime:
+</p>
+<ul>
+    <li><span class="emphasis-bold">Anchor Constraint Validation:</span> A 2D raycast and overlap sensor sweeps around the player's aim vector, ensuring the tongue can only attach to objects tagged as "Candy" anchors.</li>
+    <li><span class="emphasis-bold">Dynamic Retraction:</span> When the player holds down the pull button, a controller script reduces the joint's <span class="code-highlight">distance</span> parameter incrementally. Rather than modifying velocity vectors directly—which bypasses Unity's collision system—this relies on the physics engine to pull the Rigidbody2D naturally, preserving environmental collisions.</li>
+    <li><span class="emphasis-bold">Visual Rendering:</span> A custom script updates a <span class="code-highlight">LineRenderer</span> every frame, stretching the tongue sprite from the mouth to the active anchor coordinates.</li>
+</ul>
+</div>
+<h3>3.2 Time-Based Charge-Up Jump Mechanics <span class="tech-pill">Accumulator & Force Mapping</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Designing a jump mechanic that supports nuanced mobile touch controls, permitting both small hops and high launches without introducing complex touch gestures.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Implemented a time-accumulator launch calculator that monitors player input duration:
+</p>
+<ul>
+    <li><span class="emphasis-bold">Force Accumulation:</span> Holding down the input charges a timer. This timer maps to a jump force range clamped between a defined minimum and maximum threshold.</li>
+    <li><span class="emphasis-bold">Squash Visual Feedback (The Non-Diegetic HUD):</span> To avoid cluttering the screen with a generic progress bar, I mapped the timer value directly to the player's sprite scale. While charging, the frog squashes down vertically and stretches horizontally, intuitively communicating the stored kinetic energy.</li>
+    <li><span class="emphasis-bold">Vector Launch:</span> On release, the stored force is applied as a sudden impulse vector along the frog's facing direction, launching the Rigidbody2D.</li>
+</ul>
+</div>
+<h3>3.3 Event-Driven Lever & Door Interactions <span class="tech-pill">Decoupled Activation</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Creating a level interaction system where levers open specific locked doors, without creating tight object references that make level editing difficult.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Developed a trigger sensor model that uses C# delegates to broadcast lever activations:
+</p>
+<ul>
+    <li><span class="emphasis-bold">Proximity Checks:</span> Levers use 2D triggers to detect when the player is within interaction range, showing a prompt on mobile screens.</li>
+    <li><span class="emphasis-bold">Decoupled Triggering:</span> Levers expose an <span class="code-highlight">OnActivated</span> event. Specific doors subscribe to these events at start-up, meaning a single lever can trigger multiple actions (opening a door, activating a trap, triggering a camera zone) without containing hardcode dependencies.</li>
+</ul>
+</div>
+<hr class="section-divider">
+<h2>4. Technical Implementation & Scripts</h2>
+<p>
+    The two core scripts below demonstrate the physics integration and control mapping implemented for the locomotion system:
+</p>
+<h3>TongueGrappleController.cs </h3>
+<pre><code class="language-csharp">using UnityEngine;
 
 public class TongueGrappleController : MonoBehaviour
 {
@@ -208,11 +192,11 @@ public class TongueGrappleController : MonoBehaviour
     void Update()
     {
         // Mobile touch / click detection
-        if (Input.GetMouseButtonDown(0) && !isGrappled)
+        if (Input.GetMouseButtonDown(0) &amp;&amp; !isGrappled)
         {
             TryGrapple();
         }
-        else if (Input.GetMouseButtonUp(0) && isGrappled)
+        else if (Input.GetMouseButtonUp(0) &amp;&amp; isGrappled)
         {
             ReleaseGrapple();
         }
@@ -251,7 +235,7 @@ public class TongueGrappleController : MonoBehaviour
     void RetractTongue()
     {
         // Reduce the joint distance over time
-        if (springJoint.distance > minJointDistance)
+        if (springJoint.distance &gt; minJointDistance)
         {
             springJoint.distance = Mathf.MoveTowards(springJoint.distance, minJointDistance, pullSpeed * Time.deltaTime);
         }
@@ -270,9 +254,8 @@ public class TongueGrappleController : MonoBehaviour
         tongueLine.positionCount = 0;
     }
 }</code></pre>
-
-        <h3>ChargeJump.cs</h3>
-        <pre><code class="language-csharp">using UnityEngine;
+<h3>ChargeJump.cs </h3>
+<pre><code class="language-csharp">using UnityEngine;
 
 public class ChargeJump : MonoBehaviour
 {
@@ -340,14 +323,14 @@ public class ChargeJump : MonoBehaviour
         rb.AddForce(launchDirection * appliedForce, ForceMode2D.Impulse);
     }
 }</code></pre>
-
-        <h2>5. Gameplay Showcase</h2>
+<hr class="section-divider">
+<h2>5. Gameplay Showcase</h2>
         <a href="https://www.youtube.com/watch?v=QWWrccZAKxY" target="_blank" rel="noopener noreferrer" class="video-link-card" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('squash-leap-cover.jpg');">
             <div class="play-btn-overlay">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </div>
             <div class="video-card-title">
-                <span>Watch Gameplay on YouTube (Placeholder)</span>
+                <span>Watch Gameplay on YouTube</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
             </div>
         </a>

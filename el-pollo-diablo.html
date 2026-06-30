@@ -7,7 +7,7 @@
     <title>El Pollo Diablo | Technical Case Study</title>
     <meta name="description" content="Technical engineering breakdown of El Pollo Diablo: 2D side-scrolling boss AI FSM and asymmetric local multiplayer input routing.">
     <meta property="og:title" content="El Pollo Diablo | Technical Case Study — Anirudh MP">
-    <meta property="og:description" content="2D side-scrolling combat game: FSM boss AI, asymmetric multiplayer input routing, Observer Pattern architecture.">
+    <meta property="og:description" content="Technical engineering breakdown of El Pollo Diablo: 2D side-scrolling boss AI FSM and asymmetric local multiplayer input routing.">
     <meta property="og:image" content="el-pollo-diablo-cover.jpg">
     <meta property="og:type" content="article">
     <link rel="stylesheet" href="styles.css">
@@ -28,7 +28,7 @@
         <h2 class="subtitle">Technical System Architecture Case Study</h2>
         
         <div class="meta-grid">
-            <div class="meta-item">
+                        <div class="meta-item">
                 <div class="meta-label">Engine & Language</div>
                 <div class="meta-value">Unity / C#</div>
             </div>
@@ -45,307 +45,257 @@
                 <div class="meta-value">Solo (UI Assets by Friend)</div>
             </div>
         </div>
+                <a href="https://www.youtube.com/watch?v=QWWrccZAKxY" target="_blank" rel="noopener noreferrer" class="cs-video-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>
+            Watch Gameplay Video
+        </a>
     </header>
 
     <main class="case-study-content">
         <a href="index.html#projects" class="back-nav">← Back to Projects</a>
 
-        <img src="el-pollo-diablo-cover.jpg" alt="El Pollo Diablo game title logo with stylized yellow lettering and horns over a burning orange flame background" class="cs-cover-img">
+        <img src="el-pollo-diablo-cover.jpg" alt="EL POLLO DIABLO game cover art" class="cs-cover-img">
 
         <h2>1. Project Vision</h2>
-        <p>
-            <span class="emphasis-bold pollo-highlight">El Pollo Diablo</span> is a 2D side-scrolling combat systems demonstration focusing entirely on combat mechanics and system management, with no platforming sequences. The game features two distinct operational modes:
-        </p>
-        <div class="polish-grid" style="margin-bottom: 30px;">
-            <div class="polish-card">
-                <h4>1. Single-Player Boss Fight Mode</h4>
-                <p>
-                    The player controls the Prisoner, engaging in a boss-battle campaign against the AI-controlled mutant chicken boss (<span class="pollo-highlight">El Pollo Diablo</span>) governed by a 12-state Finite State Machine (FSM).
-                </p>
-            </div>
-            <div class="polish-card">
-                <h4>2. Local Asymmetric Multiplayer Mode</h4>
-                <p>
-                    A PvP setup where Player 1 controls the nimble Prisoner (melee combat and throwable boomerang) and Player 2 takes direct, hardware-routed control of the massive boss chicken (<span class="pollo-highlight">El Pollo Diablo</span>), utilizing charge attacks, ground slams, levitation bombardment, and minion spawning.
-                </p>
-            </div>
-        </div>
-
-        <div class="challenge-solution-card" style="border-left: 4px solid var(--cs-accent);">
-            <div class="card-tag tag-challenge">The Engineering Challenge</div>
-            <p style="margin-top: 10px;">
-                Developing a single, decoupled codebase capable of handling both modes: implementing advanced AI state behavior for the single-player boss, mapping distinct input routing configurations for local multiplayer, and managing physical collisions for asymmetric characters.
-            </p>
-        </div>
-        <h2>2. Technical Architecture & Module Structure</h2>
-        <p>
-            The architecture utilizes Unity’s modular component model, extended with custom decoupled modules, custom state machines, and event-driven patterns to handle cross-system coordination without circular references.
-        </p>
-        
-        <div class="arch-diagram">
-            <div class="arch-column">
-                <h4>Player Systems</h4>
-                <ul>
-                    <li>Input Routing</li>
-                    <li>Locomotion & Jump</li>
-                    <li>Dash Module</li>
-                    <li>Melee Controller</li>
-                    <li>Throwable Weapon Broker</li>
-                    <li>Status Effect Registry</li>
-                    <li>Physics Translation Module</li>
-                </ul>
-            </div>
-            <div class="arch-column">
-                <h4>Boss AI & Attack Modules</h4>
-                <ul>
-                    <li>StateController (FSM)</li>
-                    <li>Target Acquisition</li>
-                    <li>BaseAttack Interface</li>
-                    <li class="sub-item">ChargeAttack Module</li>
-                    <li class="sub-item">LevitateAttack Module</li>
-                    <li class="sub-item">GroundSlam Module</li>
-                    <li class="sub-item">HeadAttack Module</li>
-                    <li>Boss Controller Broker</li>
-                    <li>Hitbox Overlap Solvers</li>
-                </ul>
-            </div>
-            <div class="arch-column">
-                <h4>Shared Core Systems</h4>
-                <ul>
-                    <li>Decoupled Health Model</li>
-                    <li>Health Utility Extensions</li>
-                    <li>Collision Matrix Layers</li>
-                    <li>Dynamic Projectile Solver</li>
-                    <li>Global HitStop Broker</li>
-                    <li>Interpolation Camera</li>
-                    <li>Visual ScreenShake API</li>
-                    <li>Parallax Depth Solver</li>
-                    <li>Device-Routing Assigner</li>
-                </ul>
-            </div>
-        </div>
-
-        <h2>3. Key Technical Systems — Deep Dive</h2>
-
-        <h3>3.1 Throwable Boomerang Weapon <span class="tech-pill">State FSM & Physics Sweep</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Implementing a highly-dynamic throwable weapon that flies horizontally, bounces off environments at calculated geometric reflection angles, and returns reliably to a moving player—while avoiding collision tunneling at high speeds and mitigating coupling conflicts.
-            </p>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Designed a state-managed projectile driven by a local finite state machine: <span class="code-highlight">Possessed → Flying → Bouncing → Grounded</span>.
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Discrete Collision Mitigation:</span> To prevent physics tunneling (skipping walls at high velocity), discrete calculations were replaced with <span class="code-highlight">Physics2D.CircleCast</span> sweep tests. This scans the vector path between frames, catching geometry impacts before rendering next positions. Max-range exhaustion transitions the state to Grounded.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Geometric Reflection:</span> On collision, a parametric ricochet vector calculates a precise 60° bounce using force decomposition (<span class="code-highlight">forceY = forceX * tan(60°)</span>). Custom vertical force updates are managed dynamically in <span class="code-highlight">FixedUpdate</span> for predictable physics trajectories without reliance on unstable physics materials.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Boundary Solvers & Catch Handshake:</span> To prevent off-screen loss, boundaries trigger reflection offsets, and a floor boundary limits falling. A <span class="code-highlight">catchDelay</span> window prevents immediate player collision detection on throw; when expired, trigger-overlap triggers a catch event, reparenting the weapon transform.
-                </li>
-            </ul>
-
-            <div class="card-tag tag-refinement">Event-Driven Decoupling</div>
-            <p>
-                The weapon executes updates via C# <span class="code-highlight">Action</span> delegates (<span class="code-highlight">onThrow</span>, <span class="code-highlight">onCatch</span>). The player controller listens to these events to disable/enable other actions (like melee swings) without directly referencing or controlling the weapon object.
-            </p>
-        </div>
-
-        <h3>3.2 Dynamic Interpolation Camera System <span class="tech-pill">Target Hysteresis</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Maintaining visual focus on asymmetric targets that move independently across the screen. The camera needed to track targets smoothly, look ahead in the direction of movement, and frame dynamic enemies without boundary jitter or screen-shake drift.
-            </p>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Created an interpolation camera system featuring three key layers:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Dead-Zone Slack:</span> Employs a bounding threshold. The camera remains stationary while the primary target moves within the boundary, responding only when the target intersects the threshold to minimize micro-jitter.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Velocity Look-Ahead:</span> Shifts the camera's target offset in the direction of movement using <span class="code-highlight">Mathf.Lerp</span>, giving players visual warning of incoming environmental elements.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Hysteresis Buffer:</span> Targets register with a camera magnet service. Jitter caused by targets lingering at the tracking radius edge is resolved using a hysteresis buffer: active tracked targets receive a 1.5x radius bonus, requiring them to move significantly further to break focus.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Shake Isolation:</span> Visual screen-shake calculations are offset on a secondary child transform. This isolates screen shake from the main camera lerp tracking, preventing temporary shake from permanently drifting the base target coordinates.
-                </li>
-            </ul>
-        </div>
-
-        <h3>3.3 Single-Player Boss AI Engine <span class="tech-pill">FSM & Cooldown Scaling</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Engineering an engaging, unpredictable AI opponent for the Single-Player boss fight mode that utilizes the modular attack suite (Charge, Levitating, Slam, Head-strike) without falling into repetitive attack loops or predictable scripted cycles.
-            </p>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Built a layered decision engine that serves as the AI brain in Single-Player, dividing state validation from attack selection:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Validation Layer:</span> An enum-based Finite State Machine (<span class="code-highlight">StateController</span>) manages 12 states (Idle, Levitating, RunAttack, etc.) validating state changes via explicit <span class="code-highlight">CanTransitionTo()</span> assertions, preventing illegal behavior combinations (e.g. running while airborne).
-                </li>
-                <li>
-                    <span class="emphasis-bold">Dynamic Probability Selection:</span> Attacks are selected dynamically based on weight metrics: <span class="code-highlight">baseWeight</span>, <span class="code-highlight">weightDropAfterUse</span>, and <span class="code-highlight">weightGainPerTurn</span>. When an attack is executed, its probability drop shifts distribution to other attacks, naturally encouraging gameplay variety.
-                </li>
-                <li>
-                    <span class="emphasis-bold">HP-Cooldown Interpolation:</span> Cooldown periods scale relative to the boss's current health. By mapping remaining health ratio to cooldown times via <span class="code-highlight">Mathf.Lerp</span>, the engine accelerates attack rates as health declines, dynamically ramping difficulty.
-                </li>
-            </ul>
-        </div>
-
-        <h3>3.4 Hardware-Independent Input Assigner <span class="tech-pill">Device Routing Broker</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Unity's Input System default configuration assumes single-user gamepad setups. Supporting dynamic asymmetric local play required routing multiple distinct hardware input maps to independent characters at runtime.
-            </p>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Implemented a device-routing broker (<span class="code-highlight">ControllerAssigner</span>) that listens to device triggers and maps bindings sequentially:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Dynamic Polling:</span> The manager monitors all connected inputs across two isolated action maps simultaneously.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Registration Handshake:</span> Players confirm assignments by holding down both triggers, preventing accidental bindings.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Conflict Swap Resolution:</span> If players attempt to claim the same hardware device, a swap routine handles safe reassignment to prevent duplicate device capture.
-                </li>
-                <li>
-                    <span class="emphasis-bold">UI State & Static Persistence:</span> Interactive UI feedback flashes to confirm device status, and device maps are cached in static class variables to preserve controller assignment across scene transitions.
-                </li>
-            </ul>
-        </div>
-
-        <h3>3.5 UI Presentation & Asset Integration <span class="tech-pill">Collaborative Polish</span></h3>
-        <div class="challenge-solution-card">
-            <div class="card-tag tag-challenge">The Challenge</div>
-            <p>
-                Designing high-quality, visually polished user interface assets was a major development bottleneck due to:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Skill Specialization:</span> As a sole developer, my focus was entirely on backend systems engineering, FSM design, and physics solvers rather than graphic design.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Placeholder Programmer Art:</span> Using placeholder assets during early testing limited the aesthetic appeal of the combat and multiplayer routing interfaces.
-                </li>
-            </ul>
-            
-            <div class="card-tag tag-solution">The Solution</div>
-            <p>
-                Following the completion of the initial gameplay prototype, a graphic designer friend voluntarily offered to help by designing professional UI assets, which allowed me to focus on:
-            </p>
-            <ul>
-                <li>
-                    <span class="emphasis-bold">Decoupled UI event brokers:</span> Programming event-driven HUD triggers that listen to health change delegates without circular references.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Input routing integration:</span> Engineering the hardware controller assignment overlays to integrate their asset layouts seamlessly.
-                </li>
-                <li>
-                    <span class="emphasis-bold">Clean visual presentation:</span> Replacing placeholder programmer art to achieve a high-fidelity visual standard matching the core gameplay feel.
-                </li>
-            </ul>
-        </div>
-
-        <h2>4. Decoupled Health Model & Observer Pattern</h2>
-        <p>
-            The health architecture demonstrates decoupled design by isolating the primary health model from downstream presentation systems:
-        </p>
-
-        <div class="node-container">
-            <div class="node primary">
-                <div class="node-title">Model (Publisher)</div>
-                <div class="node-value">Health.cs</div>
-            </div>
-            
-            <div class="node-arrow">➔</div>
-            
-            <div class="node">
-                <div class="node-title">Event Broker</div>
-                <div class="node-value">OnHealthChanged</div>
-            </div>
-            
-            <div class="node-arrow">➔</div>
-            
-            <div class="node-sub-list">
-                <div class="node-sub-item">PlayerHealthUI (Visual Heart HUD)</div>
-                <div class="node-sub-item">InjuredHeadDisplay (Boss Damage Sprites)</div>
-                <div class="node-sub-item">Dynamic FX (Visual Damage Flash)</div>
-                <div class="node-sub-item">Physics (Knockback & Hit-Stun)</div>
-            </div>
-        </div>
-
-        <p>
-            <span class="emphasis-bold">Design Benefits:</span> <span class="code-highlight">Health.cs</span> maintains zero direct references to the user interface, sprite renderers, or VFX scripts. It simply broadcasts value changes. Adding or removing health-reactive features requires no edits to the core health calculation code—adhering directly to the <span class="emphasis-bold">Open/Closed Principle</span>.
-        </p>
-        <p>
-            <span class="emphasis-bold">Extension Utilities:</span> A custom static wrapper, <span class="code-highlight">HealthExtensions.cs</span>, provides target resolution via <span class="code-highlight">FindHealth()</span>. It scans the calling transform, parent hierarchies, and children nodes sequentially, replacing repetitive and slow component queries across auxiliary gameplay scripts.
-        </p>
-
-        <h2>5. Game Feel & Visual Polish Implementations</h2>
-        <p>
-            High-fidelity feedback systems were integrated into the gameplay loop to deliver modern, responsive interactions:
-        </p>
-
-        <div class="polish-grid">
-            <div class="polish-card">
-                <h4>Hit Stop (Time Freeze)</h4>
-                <p>
-                    Successful hits set <span class="code-highlight">Time.timeScale</span> to 0 for 50ms. To avoid timing bugs when multiple triggers hit simultaneously, a centralized global reference counter tracks active requests, ensuring timescale returns to normal only when all requests are fulfilled.
-                </p>
-            </div>
-            <div class="polish-card">
-                <h4>Squash & Stretch</h4>
-                <p>
-                    On landing contact, player models scale dynamically (130% width, 70% height) and recover over a 200ms window. The interpolation coroutine monitors and preserves sprite direction variables to prevent rendering glitches.
-                </p>
-            </div>
-            <div class="polish-card">
-                <h4>Audio Pitch Variation</h4>
-                <p>
-                    Sound assets trigger with randomized pitch offsets between 0.75 and 1.25. A threshold limit (<span class="code-highlight">minPitchDifference</span>) ensures consecutive triggers are audibly distinct, preventing repetitive audio overlapping.
-                </p>
-            </div>
-            <div class="polish-card">
-                <h4>Dynamic Damage Flash</h4>
-                <p>
-                    Damage frames trigger a 150ms red flash. Managed via a coroutine, the system swaps renderer color variables and restores initial material color states on completion to ensure visual consistency.
-                </p>
-            </div>
-            <div class="polish-card">
-                <h4>Confusion Status Effect</h4>
-                <p>
-                    A status modifier that reverses directional input vectors and swaps jump/attack commands. The state changes interface displays and cleans up active mappings on disable to avoid persistent input bugs.
-                </p>
-            </div>
-        </div>
-
-        <h2>6. Gameplay Showcase</h2>
+<p>
+    Named after the legendary mutant chicken myth in <em>The Curse of Monkey Island</em>, <span class="emphasis-bold">El Pollo Diablo</span> is a 2D side-scrolling combat demonstration. Bypassing traditional platforming sequences entirely, the game focuses on technical systems engineering and combat design across two modes:
+</p>
+<div class="polish-grid">
+    <div class="polish-card">
+        <h4>1. Single-Player Boss Fight Mode</h4>
+<p>
+    The player controls the Prisoner, fighting a campaign against the AI-controlled mutant chicken boss (<em>El Pollo Diablo</em>), whose complex attack behaviors are governed by a 12-state Finite State Machine (FSM).
+</p>
+</div>
+    <div class="polish-card">
+        <h4>2. Local Asymmetric Multiplayer Mode</h4>
+<p>
+    A PvP match where Player 1 controls the agile, melee-focused Prisoner (utilizing a throwable boomerang), and Player 2 takes direct, hardware-routed control of the massive boss chicken, utilizing charge attacks, slams, and minion spawns.
+</p>
+</div>
+</div>
+<p>
+    Developing a single, decoupled codebase capable of handling both modes—integrating AI decision trees, routing distinct hardware maps, and balancing asymmetric combat—was the main engineering challenge of this project.
+</p>
+<hr class="section-divider">
+<h2>2. Technical Architecture & Module Structure</h2>
+<p>
+    The architecture utilizes Unity’s modular component model, extended with custom decoupled modules, custom state machines, and event-driven patterns to handle cross-system coordination without circular references.
+</p>
+<div class="arch-diagram">
+    <div class="arch-column">
+        <h4>Player Systems</h4>
+<ul>
+    <li>Input Routing</li>
+    <li>Locomotion & Jump</li>
+    <li>Dash Module</li>
+    <li>Melee Controller</li>
+    <li>Throwable Weapon Broker</li>
+    <li>Status Effect Registry</li>
+    <li>Physics Translation Module</li>
+</ul>
+    </div>
+    <div class="arch-column">
+        <h4>Boss AI & Attack Modules</h4>
+<ul>
+    <li>StateController (FSM)</li>
+    <li>Target Acquisition</li>
+    <li>BaseAttack Interface</li>
+    <li class="sub-item">ChargeAttack Module [Teammate]</li>
+    <li class="sub-item">LevitateAttack Module [Teammate]</li>
+    <li class="sub-item">GroundSlam Module [Teammate]</li>
+    <li class="sub-item">HeadAttack Module [Teammate]</li>
+    <li>Boss Controller Broker</li>
+    <li>Hitbox Overlap Solvers</li>
+</ul>
+    </div>
+    <div class="arch-column">
+        <h4>Shared Core Systems</h4>
+<ul>
+    <li>Decoupled Health Model</li>
+    <li>Health Utility Extensions</li>
+    <li>Collision Matrix Layers</li>
+    <li>Dynamic Projectile Solver</li>
+    <li>Global HitStop Broker</li>
+    <li>Interpolation Camera</li>
+    <li>Visual ScreenShake API</li>
+    <li>Parallax Depth Solver</li>
+    <li>Device-Routing Assigner</li>
+</ul>
+    </div>
+</div>
+<hr class="section-divider">
+<h2>3. Key Technical Systems — Deep Dive</h2>
+<h3>3.1 Throwable Boomerang Weapon <span class="tech-pill">State FSM & Physics Sweep</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Implementing a highly-dynamic throwable weapon that flies horizontally, bounces off environments at calculated geometric reflection angles, and returns reliably to a moving player—while avoiding collision tunneling at high speeds and mitigating coupling conflicts.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Designed a state-managed projectile driven by a local finite state machine: <span class="code-highlight">Possessed → Flying → Bouncing → Grounded</span>.
+</p>
+<ul>
+    <li><span class="emphasis-bold">Discrete Collision Mitigation:</span> To prevent physics tunneling (skipping walls at high velocity), discrete calculations were replaced with <span class="code-highlight">Physics2D.CircleCast</span> sweep tests. This scans the vector path between frames, catching geometry impacts before rendering next positions. Max-range exhaustion transitions the state to Grounded.</li>
+    <li><span class="emphasis-bold">Geometric Reflection:</span> On collision, a parametric ricochet vector calculates a precise 60° bounce using force decomposition (<span class="code-highlight">forceY = forceX * tan(60°)</span>). Custom vertical force updates are managed dynamically in <span class="code-highlight">FixedUpdate</span> for predictable physics trajectories without reliance on unstable physics materials.</li>
+    <li><span class="emphasis-bold">Boundary Solvers & Catch Handshake:</span> To prevent off-screen loss, boundaries trigger reflection offsets, and a floor boundary limits falling. A <span class="code-highlight">catchDelay</span> window prevents immediate player collision detection on throw; when expired, trigger-overlap triggers a catch event, reparenting the weapon transform.</li>
+</ul>
+    <div class="card-tag tag-refinement">Event-Driven Decoupling</div>
+<p>
+    The weapon executes updates via C# <span class="code-highlight">Action</span> delegates (<span class="code-highlight">onThrow</span>, <span class="code-highlight">onCatch</span>). The player controller listens to these events to disable/enable other actions (like melee swings) without directly referencing or controlling the weapon object.
+</p>
+</div>
+<h3>3.2 Dynamic Interpolation Camera System <span class="tech-pill">Target Hysteresis</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Maintaining visual focus on asymmetric targets that move independently across the screen. The camera needed to track targets smoothly, look ahead in the direction of movement, and frame dynamic enemies without boundary jitter or screen-shake drift.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Created an interpolation camera system featuring three key layers:
+</p>
+<ul>
+    <li><span class="emphasis-bold">Dead-Zone Slack:</span> Employs a bounding threshold. The camera remains stationary while the primary target moves within the boundary, responding only when the target intersects the threshold to minimize micro-jitter.</li>
+    <li><span class="emphasis-bold">Velocity Look-Ahead:</span> Shifts the camera's target offset in the direction of movement using <span class="code-highlight">Mathf.Lerp</span>, giving players visual warning of incoming environmental elements.</li>
+    <li><span class="emphasis-bold">Hysteresis Buffer:</span> Targets register with a camera magnet service. Jitter caused by targets lingering at the tracking radius edge is resolved using a hysteresis buffer: active tracked targets receive a 1.5x radius bonus, requiring them to move significantly further to break focus.</li>
+    <li><span class="emphasis-bold">Shake Isolation:</span> Visual screen-shake calculations are offset on a secondary child transform. This isolates screen shake from the main camera lerp tracking, preventing temporary shake from permanently drifting the base target coordinates.</li>
+</ul>
+</div>
+<h3>3.3 Single-Player Boss AI Engine <span class="tech-pill">FSM & Cooldown Scaling</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Engineering an engaging, unpredictable AI opponent for the Single-Player boss fight mode that utilizes the modular attack suite (Charge, Levitating, Slam, Head-strike) without falling into repetitive attack loops or predictable scripted cycles.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Built a layered decision engine that serves as the AI brain in Single-Player, dividing state validation from attack selection:
+</p>
+<ul>
+    <li><span class="emphasis-bold">Validation Layer:</span> An enum-based Finite State Machine (<span class="code-highlight">StateController</span>) manages 12 states (Idle, Levitating, RunAttack, etc.) validating state changes via explicit <span class="code-highlight">CanTransitionTo()</span> assertions, preventing illegal behavior combinations (e.g. running while airborne).</li>
+    <li><span class="emphasis-bold">Dynamic Probability Selection:</span> Attacks are selected dynamically based on weight metrics: <span class="code-highlight">baseWeight</span>, <span class="code-highlight">weightDropAfterUse</span>, and <span class="code-highlight">weightGainPerTurn</span>. When an attack is executed, its probability drop shifts distribution to other attacks, naturally encouraging gameplay variety.</li>
+    <li><span class="emphasis-bold">HP-Cooldown Interpolation:</span> Cooldown periods scale relative to the boss's current health. By mapping remaining health ratio to cooldown times via <span class="code-highlight">Mathf.Lerp</span>, the engine accelerates attack rates as health declines, dynamically ramping difficulty.</li>
+</ul>
+</div>
+<h3>3.4 Hardware-Independent Input Assigner <span class="tech-pill">Device Routing Broker</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Unity's Input System default configuration assumes single-user gamepad setups. Supporting dynamic asymmetric local play required routing multiple distinct hardware input maps to independent characters at runtime.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Implemented a device-routing broker (<span class="code-highlight">ControllerAssigner</span>) that listens to device triggers and maps bindings sequentially:
+</p>
+<ul>
+    <li><span class="emphasis-bold">Dynamic Polling:</span> The manager monitors all connected inputs across two isolated action maps simultaneously.</li>
+    <li><span class="emphasis-bold">Registration Handshake:</span> Players confirm assignments by holding down both triggers, preventing accidental bindings.</li>
+    <li><span class="emphasis-bold">Conflict Swap Resolution:</span> If players attempt to claim the same hardware device, a swap routine handles safe reassignment to prevent duplicate device capture.</li>
+    <li><span class="emphasis-bold">UI State & Static Persistence:</span> Interactive UI feedback flashes to confirm device status, and device maps are cached in static class variables to preserve controller assignment across scene transitions.</li>
+</ul>
+</div>
+<h3>3.5 UI Presentation & Asset Integration <span class="tech-pill">Collaborative Polish</span></h3>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-challenge">The Challenge</div>
+<p>
+    Designing high-quality, visually polished user interface assets was a major development bottleneck. As a backend-focused systems engineer, using placeholder "programmer art" during early testing limited the aesthetic appeal of the combat and input routing interfaces.
+</p>
+</div>
+<div class="challenge-solution-card">
+    <div class="card-tag tag-solution">The Solution</div>
+<p>
+    Recognizing my limitations in graphic design, I collaborated with a talented graphic designer friend. They volunteered to create clean, polished visual assets, which allowed me to focus on:
+</p>
+<ul>
+    <li><span class="emphasis-bold">Decoupled UI Event Brokers:</span> Programming event-driven HUD triggers that listen to health change delegates without circular references.</li>
+    <li><span class="emphasis-bold">Input Routing Integration:</span> Engineering the hardware controller assignment overlays to integrate their asset layouts seamlessly.</li>
+    <li><span class="emphasis-bold">Clean Visual Presentation:</span> Replacing placeholder programmer art to achieve a high-fidelity visual standard matching the core gameplay feel.</li>
+</ul>
+</div>
+<hr class="section-divider">
+<h2>4. Decoupled Health Model & Observer Pattern</h2>
+<p>
+    The health architecture demonstrates decoupled design by isolating the primary health model from downstream presentation systems:
+</p>
+<div class="node-container">
+    <div class="node primary">
+        <div class="node-title">Model (Publisher)</div>
+        <div class="node-value">Health.cs</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="node">
+        <div class="node-title">Event Broker</div>
+        <div class="node-value">OnHealthChanged</div>
+    </div>
+    <div class="node-arrow">➔</div>
+    <div class="node-sub-list">
+        <div class="node-sub-item">PlayerHealthUI (Visual Heart HUD)</div>
+        <div class="node-sub-item">InjuredHeadDisplay (Boss Damage Sprites)</div>
+        <div class="node-sub-item">Dynamic FX (Visual Damage Flash)</div>
+        <div class="node-sub-item">Physics (Knockback & Hit-Stun)</div>
+    </div>
+</div>
+<p>
+    <span class="emphasis-bold">Design Benefits:</span> <span class="code-highlight">Health.cs</span> maintains zero direct references to the user interface, sprite renderers, or VFX scripts. It simply broadcasts value changes. Adding or removing health-reactive features requires no edits to the core health calculation code—adhering directly to the <span class="emphasis-bold">Open/Closed Principle</span>.
+</p>
+<p>
+    <span class="emphasis-bold">Extension Utilities:</span> A custom static wrapper, <span class="code-highlight">HealthExtensions.cs</span>, provides target resolution via <span class="code-highlight">FindHealth()</span>. It scans the calling transform, parent hierarchies, and children nodes sequentially, replacing repetitive and slow component queries across auxiliary gameplay scripts.
+</p>
+<hr class="section-divider">
+<h2>5. Game Feel & Visual Polish Implementations</h2>
+<p>
+    High-fidelity feedback systems were integrated into the gameplay loop to deliver modern, responsive interactions:
+</p>
+<div class="polish-grid">
+    <div class="polish-card">
+        <h4>Hit Stop (Time Freeze)</h4>
+<p>
+    Successful hits set <span class="code-highlight">Time.timeScale</span> to 0 for 50ms. To avoid timing bugs when multiple triggers hit simultaneously, a centralized global reference counter tracks active requests, ensuring timescale returns to normal only when all requests are fulfilled.
+</p>
+</div>
+    <div class="polish-card">
+        <h4>Squash & Stretch</h4>
+<p>
+    On landing contact, player models scale dynamically (130% width, 70% height) and recover over a 200ms window. The interpolation coroutine monitors and preserves sprite direction variables to prevent rendering glitches.
+</p>
+</div>
+    <div class="polish-card">
+        <h4>Audio Pitch Variation</h4>
+<p>
+    Sound assets trigger with randomized pitch offsets between 0.75 and 1.25. A threshold limit (<span class="code-highlight">minPitchDifference</span>) ensures consecutive triggers are audibly distinct, preventing repetitive audio overlapping.
+</p>
+</div>
+    <div class="polish-card">
+        <h4>Dynamic Damage Flash</h4>
+<p>
+    Damage frames trigger a 150ms red flash. Managed via a coroutine, the system swaps renderer color variables and restores initial material color states on completion to ensure visual consistency.
+</p>
+</div>
+    <div class="polish-card">
+        <h4>Confusion Status Effect</h4>
+<p>
+    A status modifier that reverses directional input vectors and swaps jump/attack commands. The state changes interface displays and cleans up active mappings on disable to avoid persistent input bugs.
+</p>
+</div>
+</div>
+<hr class="section-divider">
+<h2>6. Gameplay Showcase</h2>
         <a href="https://www.youtube.com/watch?v=QWWrccZAKxY" target="_blank" rel="noopener noreferrer" class="video-link-card" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('el-pollo-diablo-cover.jpg');">
             <div class="play-btn-overlay">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </div>
             <div class="video-card-title">
-                <span>Watch Gameplay on YouTube (Placeholder)</span>
+                <span>Watch Gameplay on YouTube</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
             </div>
         </a>

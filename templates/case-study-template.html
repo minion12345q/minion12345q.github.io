@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>{{ META_TITLE }}</title>
+    <meta name="description" content="{{ META_DESCRIPTION }}">
+    <meta property="og:title" content="{{ META_TITLE }} — Anirudh MP">
+    <meta property="og:description" content="{{ META_DESCRIPTION }}">
+    <meta property="og:image" content="{{ COVER_IMAGE }}">
+    <meta property="og:type" content="article">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="case-study.css">
+</head>
+<body class="theme-{{ THEME }}">
+    <nav class="navbar">
+        <div class="logo">Anirudh MP</div>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#projects">Projects</a></li>
+        </ul>
+    </nav>
+
+    <header class="case-study-hero">
+        <h1 class="glitch" data-text="{{ GLITCH_TITLE }}">{{ TITLE_HTML }}</h1>
+        <h2 class="subtitle">{{ SUBTITLE }}</h2>
+        
+        <div class="meta-grid">
+            {{ META_GRID_HTML }}
+        </div>
+        {{ VIDEO_BUTTON_HTML }}
+    </header>
+
+    <main class="case-study-content">
+        <a href="index.html#projects" class="back-nav">← Back to Projects</a>
+
+        <img src="{{ COVER_IMAGE }}" alt="{{ GLITCH_TITLE }} game cover art" class="cs-cover-img">
+
+        {{ BODY_CONTENT }}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <a href="index.html#projects" class="cta-btn" style="margin-bottom: 3rem;">Back to Portfolio</a>
+            <div class="social-links">
+                <a href="https://gitlab.com/minpitothers" target="_blank" rel="noopener noreferrer">GitLab</a>
+                <a href="https://anirudh-mp.itch.io" target="_blank" rel="noopener noreferrer">Itch.io</a>
+                <a href="https://discord.com/users/802830732791644171" target="_blank" rel="noopener noreferrer">Discord</a>
+                <a href="https://www.linkedin.com/in/anirudh-mp-785530284" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </div>
+            <p class="copyright">© 2026 Game Dev Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+</body>
+</html>
