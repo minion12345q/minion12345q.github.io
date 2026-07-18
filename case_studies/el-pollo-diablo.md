@@ -11,7 +11,7 @@
     {"label": "Target Role", "value": "Gameplay / Systems Engineer"},
     {"label": "Development", "value": "Solo (UI Assets by Friend)"}
   ],
-  "video_url": "https://www.youtube.com/watch?v=QWWrccZAKxY",
+  "video_url": "https://youtu.be/7LcFI-s4p_8",
   "cover_image": "el-pollo-diablo-cover.jpg"
 }
 ---
@@ -115,9 +115,32 @@ Engineering an engaging, unpredictable AI opponent for the Single-Player boss fi
 ::: solution
 Built a layered decision engine that serves as the AI brain in Single-Player, dividing state validation from attack selection:
 - **Validation Layer:** An enum-based Finite State Machine (`StateController`) manages 12 states (Idle, Levitating, RunAttack, etc.) validating state changes via explicit `CanTransitionTo()` assertions, preventing illegal behavior combinations (e.g. running while airborne).
+- **Stuck Prevention & Velocity Fallbacks:** In the first prototype, a bug caused the boss to get stuck in the `Run` state, failing to transition back to the `Waiting` state if it collided awkwardly with environment obstacles, which locked up all animations and input routing. To bypass this, I added a dual-safety validation check: the controller monitors the boss's active Rigidbody2D velocity (resetting the state if velocity drops to zero during a run) and runs an internal state duration timer that automatically forces a reset back to the default FSM state if an action exceeds its time limit.
 - **Dynamic Probability Selection:** Attacks are selected dynamically based on weight metrics: `baseWeight`, `weightDropAfterUse`, and `weightGainPerTurn`. When an attack is executed, its probability drop shifts distribution to other attacks, naturally encouraging gameplay variety.
 - **HP-Cooldown Interpolation:** Cooldown periods scale relative to the boss's current health. By mapping remaining health ratio to cooldown times via `Mathf.Lerp`, the engine accelerates attack rates as health declines, dynamically ramping difficulty.
 :::
+
+Here is the FSM state transition flow illustrating how the boss's actions are coordinated. Notice that attacks cannot switch directly between one another; all states must route back through the central `Waiting` hub:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Waiting : Spawn
+    Waiting --> RunAttack : Dynamic Probability
+    Waiting --> JumpAttack : Dynamic Probability
+    Waiting --> GroundSlam : Dynamic Probability
+    Waiting --> HeadAttack : Dynamic Probability
+    
+    RunAttack --> Waiting : Action Complete / Reset
+    JumpAttack --> Waiting : Action Complete / Reset
+    GroundSlam --> Waiting : Action Complete / Reset
+    HeadAttack --> Waiting : Action Complete / Reset
+    
+    note right of Waiting
+        Central FSM Hub
+        Cannot switch directly between attacks.
+        Requires routing back to Waiting.
+    end note
+```
 
 ### 3.4 Hardware-Independent Input Assigner [tech-pill: Device Routing Broker]
 

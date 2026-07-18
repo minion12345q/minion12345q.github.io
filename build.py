@@ -45,8 +45,11 @@ def compile_markdown_to_html(body_text, video_url):
             if in_code_block:
                 # Close code block
                 code_content = "\n".join(code_lines)
-                code_content = code_content.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                output.append(f'<pre><code class="language-{code_block_lang}">{code_content}</code></pre>')
+                if code_block_lang.lower() == 'mermaid':
+                    output.append(f'<div class="mermaid">\n{code_content}\n</div>')
+                else:
+                    code_content = code_content.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                    output.append(f'<pre><code class="language-{code_block_lang}">{code_content}</code></pre>')
                 in_code_block = False
                 code_lines = []
             else:
@@ -324,6 +327,8 @@ def main():
         
     compiled_any = False
     for filename in os.listdir(case_studies_dir):
+        if filename.startswith('~$') or filename.startswith('.'):
+            continue
         if filename.endswith('.md'):
             md_path = os.path.join(case_studies_dir, filename)
             try:

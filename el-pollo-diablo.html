@@ -45,7 +45,7 @@
                 <div class="meta-value">Solo (UI Assets by Friend)</div>
             </div>
         </div>
-                <a href="https://www.youtube.com/watch?v=QWWrccZAKxY" target="_blank" rel="noopener noreferrer" class="cs-video-btn">
+                <a href="https://youtu.be/7LcFI-s4p_8" target="_blank" rel="noopener noreferrer" class="cs-video-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M8 5v14l11-7z"/></svg>
             Watch Gameplay Video
         </a>
@@ -181,9 +181,32 @@
 </p>
 <ul>
     <li><span class="emphasis-bold">Validation Layer:</span> An enum-based Finite State Machine (<span class="code-highlight">StateController</span>) manages 12 states (Idle, Levitating, RunAttack, etc.) validating state changes via explicit <span class="code-highlight">CanTransitionTo()</span> assertions, preventing illegal behavior combinations (e.g. running while airborne).</li>
+    <li><span class="emphasis-bold">Stuck Prevention & Velocity Fallbacks:</span> In the first prototype, a bug caused the boss to get stuck in the <span class="code-highlight">Run</span> state, failing to transition back to the <span class="code-highlight">Waiting</span> state if it collided awkwardly with environment obstacles, which locked up all animations and input routing. To bypass this, I added a dual-safety validation check: the controller monitors the boss's active Rigidbody2D velocity (resetting the state if velocity drops to zero during a run) and runs an internal state duration timer that automatically forces a reset back to the default FSM state if an action exceeds its time limit.</li>
     <li><span class="emphasis-bold">Dynamic Probability Selection:</span> Attacks are selected dynamically based on weight metrics: <span class="code-highlight">baseWeight</span>, <span class="code-highlight">weightDropAfterUse</span>, and <span class="code-highlight">weightGainPerTurn</span>. When an attack is executed, its probability drop shifts distribution to other attacks, naturally encouraging gameplay variety.</li>
     <li><span class="emphasis-bold">HP-Cooldown Interpolation:</span> Cooldown periods scale relative to the boss's current health. By mapping remaining health ratio to cooldown times via <span class="code-highlight">Mathf.Lerp</span>, the engine accelerates attack rates as health declines, dynamically ramping difficulty.</li>
 </ul>
+</div>
+<p>
+    Here is the FSM state transition flow illustrating how the boss's actions are coordinated. Notice that attacks cannot switch directly between one another; all states must route back through the central <span class="code-highlight">Waiting</span> hub:
+</p>
+<div class="mermaid">
+stateDiagram-v2
+    [*] --> Waiting : Spawn
+    Waiting --> RunAttack : Dynamic Probability
+    Waiting --> JumpAttack : Dynamic Probability
+    Waiting --> GroundSlam : Dynamic Probability
+    Waiting --> HeadAttack : Dynamic Probability
+    
+    RunAttack --> Waiting : Action Complete / Reset
+    JumpAttack --> Waiting : Action Complete / Reset
+    GroundSlam --> Waiting : Action Complete / Reset
+    HeadAttack --> Waiting : Action Complete / Reset
+    
+    note right of Waiting
+        Central FSM Hub
+        Cannot switch directly between attacks.
+        Requires routing back to Waiting.
+    end note
 </div>
 <h3>3.4 Hardware-Independent Input Assigner <span class="tech-pill">Device Routing Broker</span></h3>
 <div class="challenge-solution-card">
@@ -290,7 +313,7 @@
 </div>
 <hr class="section-divider">
 <h2>6. Gameplay Showcase</h2>
-        <a href="https://www.youtube.com/watch?v=QWWrccZAKxY" target="_blank" rel="noopener noreferrer" class="video-link-card" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('el-pollo-diablo-cover.jpg');">
+        <a href="https://youtu.be/7LcFI-s4p_8" target="_blank" rel="noopener noreferrer" class="video-link-card" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('el-pollo-diablo-cover.jpg');">
             <div class="play-btn-overlay">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </div>
@@ -315,6 +338,20 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                background: '#07070a',
+                primaryColor: '#e74c3c',
+                primaryTextColor: '#fff',
+                lineColor: '#e74c3c',
+                nodeBorder: '#e74c3c'
+            }
+        });
+    </script>
     <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
 </body>
 </html>
